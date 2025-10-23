@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import ContainersMain from './views/ContainersMain.vue'
+import { RouterLink, RouterView } from 'vue-router'
+
 </script>
 
 <template>
-  <ContainersMain />
+  <nav>
+    <RouterLink to="/">Home</RouterLink>
+    <RouterLink to="/containers">Containers</RouterLink>
+    <RouterLink to="/property-definition">Property definition</RouterLink>
+  </nav>
+
+  <RouterView />
 </template>
 
 <style scoped></style>
