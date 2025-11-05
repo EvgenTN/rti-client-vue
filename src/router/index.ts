@@ -24,6 +24,11 @@ const router = createRouter({
       component: () => import('../views/PropertyDefinition.vue'),
     },
     {
+      path: '/lots',
+      name: 'lots',
+      component: () => import('../views/LotsMain.vue'),
+    },
+    {
       path: '/container/:name/info',
       name: 'container-info',
       component: () => import('../views/ContainerInfo.vue'),
