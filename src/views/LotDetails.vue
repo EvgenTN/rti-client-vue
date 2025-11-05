@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ContainerService } from '@/lib/container-api'
+import { LotService } from '@/lib/lot-api'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Pencil, Info, Warehouse } from 'lucide-vue-next'
+import { ArrowLeft, Pencil, Info, Package } from 'lucide-vue-next'
 import LoadingState from '@/components/ui/LoadingState.vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
 import Card from '@/components/ui/Card.vue'
@@ -17,36 +17,36 @@ import TableCell from '@/components/ui/table/TableCell.vue'
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
-const container = ref<any>(null)
+const lot = ref<any>(null)
 
-const containerName = computed(() => route.params.name as string)
+const lotName = computed(() => route.params.name as string)
 
-async function loadContainerDetails() {
+async function loadLotDetails() {
   loading.value = true
   try {
-    const containerData = await ContainerService.getOne(containerName.value)
-    container.value = {
-      ...containerData,
-      lots: [], // Will be populated when backend endpoint is ready
+    // TODO: Replace with actual details API call when backend is ready
+    const lotData = await LotService.getOne(lotName.value)
+    lot.value = {
+      ...lotData,
+      locations: [] // Will be populated when backend endpoint is ready
     }
   } catch (error) {
-    console.error('Failed to load container details:', error)
+    console.error('Failed to load lot details:', error)
   } finally {
     loading.value = false
   }
 }
 
 function goBack() {
-  router.push('/containers')
+  router.push('/lots')
 }
 
-function editContainer() {
-  // TODO: Implement edit navigation
-  console.log('Edit container:', containerName.value)
+function editLot() {
+  router.push(`/lots/${lotName.value}/edit`)
 }
 
 onMounted(() => {
-  loadContainerDetails()
+  loadLotDetails()
 })
 </script>
 
@@ -55,31 +55,31 @@ onMounted(() => {
     <!-- Header -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Container Details</h1>
-        <p v-if="container" class="text-gray-600">
-          Details for container: <span class="font-semibold">{{ container.name }}</span>
+        <h1 class="text-2xl font-bold text-gray-900">Lot Details</h1>
+        <p v-if="lot" class="text-gray-600">
+          Details for lot: <span class="font-semibold">{{ lot.name }}</span>
         </p>
       </div>
       <div class="flex gap-2">
         <Button variant="outline" @click="goBack">
           <ArrowLeft class="mr-2 h-4 w-4" />
-          Back to Containers
+          Back to Lots
         </Button>
-        <Button v-if="container" @click="editContainer">
+        <Button v-if="lot" @click="editLot">
           <Pencil class="mr-2 h-4 w-4" />
-          Edit Container
+          Edit Lot
         </Button>
       </div>
     </div>
 
-    <LoadingState v-if="loading" message="Loading container details..." />
+    <LoadingState v-if="loading" message="Loading lot details..." />
 
-    <div v-else-if="container" class="grid gap-6 lg:grid-cols-2">
+    <div v-else-if="lot" class="grid gap-6 lg:grid-cols-2">
       <!-- Properties Card -->
       <Card>
         <div class="p-6">
           <h2 class="mb-4 text-lg font-semibold">Properties</h2>
-          <div v-if="container.properties && container.properties.length > 0">
+          <div v-if="lot.properties && lot.properties.length > 0">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -88,7 +88,7 @@ onMounted(() => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow v-for="prop in container.properties" :key="prop.name">
+                <TableRow v-for="prop in lot.properties" :key="prop.name">
                   <TableCell class="font-medium">{{ prop.name }}</TableCell>
                   <TableCell>{{ prop.value }}</TableCell>
                 </TableRow>
@@ -99,19 +99,19 @@ onMounted(() => {
             v-else
             :icon="Info"
             title="No properties defined"
-            description="This container has no properties assigned."
+            description="This lot has no properties assigned."
           />
         </div>
       </Card>
 
-      <!-- Lots Card -->
+      <!-- Locations Card -->
       <Card>
         <div class="p-6">
-          <h2 class="mb-4 text-lg font-semibold">Lots</h2>
+          <h2 class="mb-4 text-lg font-semibold">Locations</h2>
           <EmptyState
-            :icon="Warehouse"
-            title="No lots available"
-            description="Lot tracking will be available when the backend endpoint is implemented."
+            :icon="Package"
+            title="No locations available"
+            description="Location tracking will be available when the backend endpoint is implemented."
           />
         </div>
       </Card>
@@ -119,8 +119,8 @@ onMounted(() => {
 
     <EmptyState
       v-else
-      title="Container not found"
-      description="The requested container could not be found."
+      title="Lot not found"
+      description="The requested lot could not be found."
     />
   </div>
 </template>

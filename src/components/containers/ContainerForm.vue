@@ -5,34 +5,29 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { PropertyDefinitionService } from '@/lib/property-definition-api'
-import { ContainerService, type Container } from '@/lib/container-api'
-
 
 const emit = defineEmits<{
   (e: 'save', payload: any): void
   (e: 'cancel'): void
 }>()
 
-const props = withDefaults(defineProps<{ modelValue?: any; mode: 'create' | 'edit' }>(), { modelValue: undefined })
+const props = withDefaults(
+  defineProps<{ modelValue?: any; mode: 'create' | 'edit' }>(),
+  { modelValue: undefined }
+)
+
 const mode = toRef(props, 'mode')
 
 const name = ref(props.modelValue?.name ?? '')
-const containerName = ref(props.modelValue?.containerName ?? '')
-const quantity = ref<number | ''>(props.modelValue?.quantity ?? '')
-const properties = ref<Array<{ name: string; value: string }>>(props.modelValue?.properties ?? [])
+const properties = ref<Array<{ name: string; value: string }>>(
+  props.modelValue?.properties ?? []
+)
 const propertyDefs = ref<Array<{ name: string }>>([])
 const loadingPropertyDefs = ref(false)
 const propertyDefsError = ref<string | null>(null)
-const containers = ref<Container[]>([])
-const loadingContainers = ref(false)
-const containersError = ref<string | null>(null)
 
 const isFormValid = computed(() => {
   if (!name.value?.trim()) return false
-  if (mode.value === 'create') {
-    if (!containerName.value?.trim()) return false
-    if (!quantity.value || Number(quantity.value) < 0) return false
-  }
   // Check if all properties have both name and value
   for (const prop of properties.value) {
     if (!prop.name?.trim() || !prop.value?.trim()) return false
@@ -42,13 +37,13 @@ const isFormValid = computed(() => {
 
 async function loadPropertyDefs() {
   if (loadingPropertyDefs.value) return
-  
+
   loadingPropertyDefs.value = true
   propertyDefsError.value = null
-  
+
   try {
     const defs = await PropertyDefinitionService.getAll()
-    propertyDefs.value = defs.map(d => ({ name: d.name }))
+    propertyDefs.value = defs.map((d) => ({ name: d.name }))
   } catch (e) {
     propertyDefsError.value = 'Failed to load property definitions'
     console.error('Failed to load property definitions:', e)
@@ -57,36 +52,19 @@ async function loadPropertyDefs() {
   }
 }
 
-async function loadContainers() {
-  if (loadingContainers.value) return
-  
-  loadingContainers.value = true
-  containersError.value = null
-  
-  try {
-    const data = await ContainerService.getAll()
-    containers.value = data
-  } catch (e) {
-    containersError.value = 'Failed to load containers'
-    console.error('Failed to load containers:', e)
-  } finally {
-    loadingContainers.value = false
-  }
-}
-
 onMounted(() => {
   loadPropertyDefs()
-  if (mode.value === 'create') {
-    loadContainers()
-  }
 })
 
-watch(() => props.modelValue, (v) => {
-  name.value = v?.name ?? ''
-  containerName.value = v?.containerName ?? ''
-  quantity.value = v?.quantity ?? ''
-  properties.value = v?.properties ? v.properties.map((p: any) => ({ name: p.name, value: p.value })) : []
-})
+watch(
+  () => props.modelValue,
+  (v) => {
+    name.value = v?.name ?? ''
+    properties.value = v?.properties
+      ? v.properties.map((p: any) => ({ name: p.name, value: p.value }))
+      : []
+  }
+)
 
 function addProperty() {
   properties.value.push({ name: '', value: '' })
@@ -98,10 +76,10 @@ function removeProperty(idx: number) {
 
 function onSave() {
   if (!name.value || !name.value.trim()) return
-  if (mode.value === 'create' && (!containerName.value || !String(containerName.value).trim())) return
-  const payload: any = { name: name.value.trim(), properties: properties.value.map(p => ({ name: p.name, value: p.value })) }
-  if (mode.value === 'create') payload.containerName = containerName.value.trim()
-  if (mode.value === 'create') payload.quantity = Number(quantity.value)
+  const payload: any = {
+    name: name.value.trim(),
+    properties: properties.value.map((p) => ({ name: p.name, value: p.value })),
+  }
   emit('save', payload)
 }
 
@@ -114,13 +92,13 @@ function onCancel() {
   <div class="rounded-lg border bg-white shadow-sm">
     <div class="border-b bg-gray-50 p-6">
       <h2 class="text-xl font-semibold text-gray-900">
-        {{ mode === 'create' ? 'Create Lot' : 'Edit Lot' }}
+        {{ mode === 'create' ? 'Create Container' : 'Edit Container' }}
       </h2>
       <p class="mt-1 text-sm text-gray-600">
         {{
           mode === 'create'
-            ? 'Provide details for the new lot.'
-            : "Update this lot's name and properties."
+            ? 'Provide details for the new container.'
+            : "Update this container's properties."
         }}
       </p>
     </div>
@@ -130,71 +108,20 @@ function onCancel() {
         <!-- Basic Information Section -->
         <div class="grid gap-4 md:grid-cols-2">
           <div class="md:col-span-2">
-            <Label for="lot-name"
+            <Label for="container-name"
               >Name <span class="text-red-500">*</span></Label
             >
             <Input
-              id="lot-name"
+              id="container-name"
               v-model="name"
-              placeholder="Enter lot name"
+              placeholder="Enter container name"
+              :disabled="mode === 'edit'"
               required
               class="mt-1"
             />
-          </div>
-        </div>
-
-        <!-- Container and Quantity (Create only) -->
-        <div v-if="mode === 'create'" class="grid gap-4 md:grid-cols-2">
-          <div>
-            <Label for="container-name"
-              >Container <span class="text-red-500">*</span></Label
-            >
-            <Select v-model="containerName" :disabled="loadingContainers" required>
-              <SelectTrigger class="mt-1">
-                <SelectValue
-                  :placeholder="
-                    loadingContainers
-                      ? 'Loading...'
-                      : containersError
-                        ? 'Error loading containers'
-                        : 'Select container'
-                  "
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <template
-                  v-if="containers.length === 0 && !loadingContainers && !containersError"
-                >
-                  <SelectItem value="__no_containers__" disabled
-                    >No containers available</SelectItem
-                  >
-                </template>
-                <template v-else>
-                  <SelectItem
-                    v-for="container in containers"
-                    :key="container.name"
-                    :value="container.name"
-                  >
-                    {{ container.name }}
-                  </SelectItem>
-                </template>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label for="quantity"
-              >Quantity <span class="text-red-500">*</span></Label
-            >
-            <Input
-              id="quantity"
-              v-model="quantity"
-              type="number"
-              placeholder="Enter quantity"
-              min="0"
-              required
-              class="mt-1"
-            />
+            <p v-if="mode === 'edit'" class="mt-1 text-xs text-gray-500">
+              Container name cannot be changed
+            </p>
           </div>
         </div>
 
@@ -286,7 +213,7 @@ function onCancel() {
         >
           <Button type="button" variant="outline" @click="onCancel"> Cancel </Button>
           <Button type="submit" :disabled="!isFormValid">
-            {{ mode === 'create' ? 'Create Lot' : 'Update Lot' }}
+            {{ mode === 'create' ? 'Create Container' : 'Update Container' }}
           </Button>
         </div>
       </form>

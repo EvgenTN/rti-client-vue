@@ -49,4 +49,49 @@ export class ContainerService {
     }
     return response.json()
   }
+
+  static async create(container: Container): Promise<Container> {
+    const response = await fetch(`${API_BASE}/containers`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(container)
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Failed to create container: ${errorText || response.statusText}`)
+    }
+    
+    return response.json()
+  }
+
+  static async update(name: string, container: Partial<Container>): Promise<Container> {
+    const response = await fetch(`${API_BASE}/containers/${encodeURIComponent(name)}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(container)
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Failed to update container: ${errorText || response.statusText}`)
+    }
+    
+    return response.json()
+  }
+
+  static async delete(name: string): Promise<void> {
+    const response = await fetch(`${API_BASE}/containers/${encodeURIComponent(name)}`, {
+      method: 'DELETE'
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Failed to delete container: ${errorText || response.statusText}`)
+    }
+  }
 }
