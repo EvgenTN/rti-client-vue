@@ -24,6 +24,28 @@ const router = createRouter({
       component: () => import('../views/PropertyDefinition.vue'),
     },
     {
+      path: '/lots',
+      name: 'lots',
+      component: () => import('../views/LotsMain.vue'),
+    },
+    {
+      path: '/lots/create',
+      name: 'lot-create',
+      component: () => import('../views/LotCreate.vue'),
+    },
+    {
+      path: '/lots/:name',
+      name: 'lot-details',
+      component: () => import('../views/LotDetails.vue'),
+      props: true,
+    },
+    {
+      path: '/lots/:name/edit',
+      name: 'lot-edit',
+      component: () => import('../views/LotEdit.vue'),
+      props: true,
+    },
+    {
       path: '/container/:name/info',
       name: 'container-info',
       component: () => import('../views/ContainerInfo.vue'),
