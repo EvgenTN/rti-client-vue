@@ -51,6 +51,11 @@ const router = createRouter({
       component: () => import('../views/ContainerInfo.vue'),
       props: true,
     },
+    {
+      path: '/actions',
+      name: 'actions',
+      component: () => import('../views/ActionsMain.vue'),
+    },
   ],
 })
 

@@ -4,6 +4,18 @@ export type Lot = {
   properties: LotProperty[]
 }
 
+export type LotLocation = {
+  containerName: string
+  quantity: number
+  inputTimestamp: string
+}
+
+export type LotDetails = {
+  name: string
+  properties: LotProperty[]
+  locations: LotLocation[]
+}
+
 export type LotCreateDto = {
   name: string
   containerName: string
@@ -28,6 +40,11 @@ export const LotService = {
     const res = await fetch(`${base}/${encodeURIComponent(idOrName)}`)
     if (!res.ok) throw new Error('Failed to load lot')
     return (await res.json()) as Lot
+  },
+  async getDetails(idOrName: string): Promise<LotDetails> {
+    const res = await fetch(`${base}/${encodeURIComponent(idOrName)}/details`)
+    if (!res.ok) throw new Error('Failed to load lot details')
+    return (await res.json()) as LotDetails
   },
   async create(dto: LotCreateDto): Promise<Lot> {
     const res = await fetch(base, {

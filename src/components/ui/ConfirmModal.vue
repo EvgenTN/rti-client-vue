@@ -14,8 +14,8 @@ function onCancel() { emit('cancel') }
       <h3 class="font-semibold mb-2">{{ props.title || 'Confirm' }}</h3>
       <p class="mb-4">{{ props.message || 'Are you sure?' }}</p>
       <div class="flex justify-end gap-2">
-        <button class="px-3 py-1 border rounded" @click="onCancel">Cancel</button>
-        <button class="px-3 py-1 bg-red-600 text-white rounded" @click="onConfirm">Confirm</button>
+        <button class="px-3 py-1 border rounded cursor-pointer hover:bg-gray-50" @click="onCancel">Cancel</button>
+        <button class="px-3 py-1 bg-red-600 text-white rounded cursor-pointer hover:bg-red-700" @click="onConfirm">Confirm</button>
       </div>
     </div>
   </div>
