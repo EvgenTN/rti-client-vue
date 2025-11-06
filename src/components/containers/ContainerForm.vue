@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { PropertyDefinitionService } from '@/lib/property-definition-api'
+import { Plus, Trash2 } from 'lucide-vue-next'
 
 const emit = defineEmits<{
   (e: 'save', payload: any): void
@@ -130,7 +131,7 @@ function onCancel() {
           <div class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <h3 class="text-lg font-semibold text-gray-900">Properties</h3>
             <Button type="button" variant="secondary" @click.prevent="addProperty">
-              <span class="material-icons mr-2 text-sm">add</span>
+              <Plus class="mr-2 h-4 w-4" />
               Add Property
             </Button>
           </div>
@@ -201,7 +202,7 @@ function onCancel() {
                 @click.prevent="removeProperty(idx)"
                 title="Remove property"
               >
-                <span class="material-icons text-sm">delete</span>
+                <Trash2 class="h-4 w-4" />
               </Button>
             </div>
           </div>

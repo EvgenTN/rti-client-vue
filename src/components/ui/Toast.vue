@@ -11,7 +11,7 @@ const list = computed(() => toasts.value)
     <div v-for="t in list" :key="t.id" :class="['p-3 rounded shadow-md', t.type === 'error' ? 'bg-red-600 text-white' : 'bg-green-600 text-white']">
       <div class="flex items-start gap-3">
         <div class="flex-1">{{ t.message }}</div>
-        <button @click="remove(t.id)" class="opacity-80 hover:opacity-100">✕</button>
+        <button @click="remove(t.id)" class="opacity-80 hover:opacity-100 cursor-pointer">✕</button>
       </div>
     </div>
   </div>

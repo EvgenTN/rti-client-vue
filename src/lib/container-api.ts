@@ -5,6 +5,16 @@ export interface Container {
   properties?: Array<{ name: string; value: string }>
 }
 
+export interface ContainerLot {
+  name: string
+  quantity: number
+  inputTimestamp: string
+}
+
+export interface ContainerWithLots extends Container {
+  lots: ContainerLot[]
+}
+
 interface PagedResponse<T> {
   items: T[]
   page: number
@@ -46,6 +56,14 @@ export class ContainerService {
     const response = await fetch(`${API_BASE}/containers/${encodeURIComponent(name)}`)
     if (!response.ok) {
       throw new Error('Failed to fetch container')
+    }
+    return response.json()
+  }
+
+  static async getContainerWithLots(name: string): Promise<ContainerWithLots> {
+    const response = await fetch(`${API_BASE}/containers/${encodeURIComponent(name)}/lots`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch container with lots')
     }
     return response.json()
   }
