@@ -1,3 +1,5 @@
+import { fetchWithAuth, getWithAuth, postWithAuth, putWithAuth, deleteWithAuth } from './fetch-with-auth'
+
 const API_BASE = '/api'
 
 export interface Container {
@@ -26,15 +28,9 @@ interface PagedResponse<T> {
 export class ContainerService {
   static async getAll(): Promise<Container[]> {
     try {
-      const response = await fetch(`${API_BASE}/containers/GetAll`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          page: 1,
-          pageSize: 100
-        })
+      const response = await postWithAuth(`${API_BASE}/containers/GetAll`, {
+        page: 1,
+        pageSize: 100
       })
       
       if (!response.ok) {
@@ -53,7 +49,7 @@ export class ContainerService {
   }
 
   static async getOne(name: string): Promise<Container> {
-    const response = await fetch(`${API_BASE}/containers/${encodeURIComponent(name)}`)
+    const response = await getWithAuth(`${API_BASE}/containers/${encodeURIComponent(name)}`)
     if (!response.ok) {
       throw new Error('Failed to fetch container')
     }
@@ -61,7 +57,7 @@ export class ContainerService {
   }
 
   static async getContainerWithLots(name: string): Promise<ContainerWithLots> {
-    const response = await fetch(`${API_BASE}/containers/${encodeURIComponent(name)}/lots`)
+    const response = await getWithAuth(`${API_BASE}/containers/${encodeURIComponent(name)}/lots`)
     if (!response.ok) {
       throw new Error('Failed to fetch container with lots')
     }
@@ -69,13 +65,7 @@ export class ContainerService {
   }
 
   static async create(container: Container): Promise<Container> {
-    const response = await fetch(`${API_BASE}/containers`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(container)
-    })
+    const response = await postWithAuth(`${API_BASE}/containers`, container)
     
     if (!response.ok) {
       const errorText = await response.text()
@@ -86,13 +76,10 @@ export class ContainerService {
   }
 
   static async update(name: string, container: Partial<Container>): Promise<Container> {
-    const response = await fetch(`${API_BASE}/containers/${encodeURIComponent(name)}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(container)
-    })
+    const response = await putWithAuth(
+      `${API_BASE}/containers/${encodeURIComponent(name)}`,
+      container
+    )
     
     if (!response.ok) {
       const errorText = await response.text()
@@ -103,9 +90,7 @@ export class ContainerService {
   }
 
   static async delete(name: string): Promise<void> {
-    const response = await fetch(`${API_BASE}/containers/${encodeURIComponent(name)}`, {
-      method: 'DELETE'
-    })
+    const response = await deleteWithAuth(`${API_BASE}/containers/${encodeURIComponent(name)}`)
     
     if (!response.ok) {
       const errorText = await response.text()

@@ -1,10 +1,11 @@
 import type { PropertyDefinition, PropertyType } from '@/models/property-definition'
+import { getWithAuth, postWithAuth, putWithAuth, deleteWithAuth } from './fetch-with-auth'
 
 const API_BASE = '/api'
 
 export class PropertyDefinitionService {
   static async getAll(): Promise<PropertyDefinition[]> {
-    const response = await fetch(`${API_BASE}/property-definitions`)
+    const response = await getWithAuth(`${API_BASE}/property-definitions`)
     if (!response.ok) {
       throw new Error('Failed to fetch property definitions')
     }
@@ -12,7 +13,7 @@ export class PropertyDefinitionService {
   }
 
   static async getOne(name: string): Promise<PropertyDefinition> {
-    const response = await fetch(`${API_BASE}/property-definitions/${name}`)
+    const response = await getWithAuth(`${API_BASE}/property-definitions/${name}`)
     if (!response.ok) {
       throw new Error('Failed to fetch property definition')
     }
@@ -24,13 +25,7 @@ export class PropertyDefinitionService {
     description?: string
     type: number
   }): Promise<PropertyDefinition> {
-    const response = await fetch(`${API_BASE}/property-definitions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
+    const response = await postWithAuth(`${API_BASE}/property-definitions`, data)
     if (!response.ok) {
       throw new Error('Failed to create property definition')
     }
@@ -42,13 +37,7 @@ export class PropertyDefinitionService {
     description?: string
     type: number
   }): Promise<PropertyDefinition> {
-    const response = await fetch(`${API_BASE}/property-definitions/${name}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
+    const response = await putWithAuth(`${API_BASE}/property-definitions/${name}`, data)
     if (!response.ok) {
       throw new Error('Failed to update property definition')
     }
@@ -56,9 +45,7 @@ export class PropertyDefinitionService {
   }
 
   static async delete(name: string): Promise<void> {
-    const response = await fetch(`${API_BASE}/property-definitions/${name}`, {
-      method: 'DELETE',
-    })
+    const response = await deleteWithAuth(`${API_BASE}/property-definitions/${name}`)
     if (!response.ok) {
       throw new Error('Failed to delete property definition')
     }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router'
-import { Warehouse, Package, Wrench, Settings } from 'lucide-vue-next'
+import { Warehouse, Package, Wrench, Settings, User } from 'lucide-vue-next'
 import { computed } from 'vue'
 
 const route = useRoute()
@@ -9,7 +9,8 @@ const navItems = [
   { path: '/containers', label: 'Containers', icon: Warehouse },
   { path: '/lots', label: 'Lots', icon: Package },
   { path: '/actions', label: 'Actions', icon: Wrench },
-  { path: '/property-definition', label: 'Property Definitions', icon: Settings }
+  { path: '/property-definition', label: 'Property Definitions', icon: Settings },
+  { path: '/profile', label: 'Profile', icon: User }
 ]
 
 const isActive = (path: string) => {
