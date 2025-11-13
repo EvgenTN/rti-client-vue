@@ -1,4 +1,5 @@
 import type { MoveMaterialsRequest, UpdateLotQuantityRequest, Transfer } from '@/models/action'
+import { postWithAuth } from './fetch-with-auth'
 import { useToast } from './toast'
 
 const { show } = useToast()
@@ -12,13 +13,7 @@ const API_BASE = '/api/actions'
 export const ActionService = {
   async moveMaterials(request: MoveMaterialsRequest): Promise<Transfer> {
     try {
-      const response = await fetch(`${API_BASE}/MoveMaterials`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request),
-      })
+      const response = await postWithAuth(`${API_BASE}/MoveMaterials`, request)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
@@ -38,13 +33,7 @@ export const ActionService = {
 
   async updateLotQuantity(request: UpdateLotQuantityRequest): Promise<void> {
     try {
-      const response = await fetch(`${API_BASE}/UpdateLotQuantity`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request),
-      })
+      const response = await postWithAuth(`${API_BASE}/UpdateLotQuantity`, request)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))

@@ -1,3 +1,5 @@
+import { getWithAuth, postWithAuth, putWithAuth, deleteWithAuth } from './fetch-with-auth'
+
 export type LotProperty = { name: string; value: string }
 export type Lot = {
   name: string
@@ -32,26 +34,22 @@ const base = '/api/lots'
 
 export const LotService = {
   async getAll(): Promise<Lot[]> {
-    const res = await fetch(base)
+    const res = await getWithAuth(base)
     if (!res.ok) throw new Error('Failed to load lots')
     return (await res.json()) as Lot[]
   },
   async getOne(idOrName: string): Promise<Lot> {
-    const res = await fetch(`${base}/${encodeURIComponent(idOrName)}`)
+    const res = await getWithAuth(`${base}/${encodeURIComponent(idOrName)}`)
     if (!res.ok) throw new Error('Failed to load lot')
     return (await res.json()) as Lot
   },
   async getDetails(idOrName: string): Promise<LotDetails> {
-    const res = await fetch(`${base}/${encodeURIComponent(idOrName)}/details`)
+    const res = await getWithAuth(`${base}/${encodeURIComponent(idOrName)}/details`)
     if (!res.ok) throw new Error('Failed to load lot details')
     return (await res.json()) as LotDetails
   },
   async create(dto: LotCreateDto): Promise<Lot> {
-    const res = await fetch(base, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    })
+    const res = await postWithAuth(base, dto)
     if (!res.ok) {
       const text = await res.text()
       throw new Error(text || 'Failed to create lot')
@@ -59,11 +57,7 @@ export const LotService = {
     return (await res.json()) as Lot
   },
   async update(idOrName: string, dto: LotUpdateDto): Promise<Lot> {
-    const res = await fetch(`${base}/${encodeURIComponent(idOrName)}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    })
+    const res = await putWithAuth(`${base}/${encodeURIComponent(idOrName)}`, dto)
     if (!res.ok) {
       const text = await res.text()
       throw new Error(text || 'Failed to update lot')
@@ -71,7 +65,7 @@ export const LotService = {
     return (await res.json()) as Lot
   },
   async remove(idOrName: string): Promise<void> {
-    const res = await fetch(`${base}/${encodeURIComponent(idOrName)}`, { method: 'DELETE' })
+    const res = await deleteWithAuth(`${base}/${encodeURIComponent(idOrName)}`)
     if (!res.ok) throw new Error('Failed to delete lot')
   },
 }
