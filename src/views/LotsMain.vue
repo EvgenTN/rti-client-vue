@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { LotService, type Lot } from '@/lib/lot-api'
 import { Button as SButton } from '@/components/ui/button'
 import { Pencil, Trash2, Eye, Plus, Package } from 'lucide-vue-next'
@@ -19,6 +20,7 @@ import EmptyState from '@/components/ui/EmptyState.vue'
 import LoadingState from '@/components/ui/LoadingState.vue'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const lots = ref<Lot[]>([])
 const loading = ref(false)
 const viewMode = ref<'table' | 'cards'>('cards')
@@ -91,7 +93,7 @@ const hasLots = computed(() => (lots.value?.length ?? 0) > 0)
       <h1 class="text-2xl font-bold text-gray-900">Lots</h1>
       <div class="flex items-center gap-4">
         <ViewSwitcher :current-view="viewMode" @view-change="viewMode = $event" />
-        <SButton @click="createLot">
+        <SButton v-if="authStore.isOperator" @click="createLot">
           <Plus class="mr-2 h-4 w-4" />
           Create Lot
         </SButton>
@@ -137,10 +139,10 @@ const hasLots = computed(() => (lots.value?.length ?? 0) > 0)
                   <SButton size="icon" variant="ghost" @click="viewDetails(lot)" title="View details">
                     <Eye class="h-4 w-4" />
                   </SButton>
-                  <SButton size="icon" variant="ghost" @click="editLot(lot)" title="Edit lot">
+                  <SButton v-if="authStore.isOperator" size="icon" variant="ghost" @click="editLot(lot)" title="Edit lot">
                     <Pencil class="h-4 w-4" />
                   </SButton>
-                  <SButton size="icon" variant="ghost" @click="promptRemove(lot)" :disabled="removing === lot.name" title="Delete lot">
+                  <SButton v-if="authStore.isOperator" size="icon" variant="ghost" @click="promptRemove(lot)" :disabled="removing === lot.name" title="Delete lot">
                     <Trash2 class="h-4 w-4" />
                   </SButton>
                 </div>
@@ -174,11 +176,11 @@ const hasLots = computed(() => (lots.value?.length ?? 0) > 0)
               <Eye class="mr-2 h-4 w-4" />
               Details
             </SButton>
-            <SButton size="sm" @click="editLot(lot)">
+            <SButton v-if="authStore.isOperator" size="sm" @click="editLot(lot)">
               <Pencil class="mr-2 h-4 w-4" />
               Edit
             </SButton>
-            <SButton variant="destructive" size="sm" @click="promptRemove(lot)" :disabled="removing === lot.name">
+            <SButton v-if="authStore.isOperator" variant="destructive" size="sm" @click="promptRemove(lot)" :disabled="removing === lot.name">
               <Trash2 class="mr-2 h-4 w-4" />
               Delete
             </SButton>

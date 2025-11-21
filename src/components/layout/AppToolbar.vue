@@ -21,11 +21,12 @@ const pageTitle = computed(() => {
 </script>
 
 <template>
-  <header class="flex items-center gap-4 border-b bg-white px-4 py-3">
-    <Button variant="ghost" size="icon" @click="emit('toggleSidebar')">
-      <Menu class="h-5 w-5" />
-    </Button>
-    <span class="flex-1 text-lg font-semibold">Real-Time Inventory</span>
-    <span class="text-sm text-gray-600">{{ pageTitle }}</span>
-  </header>
+  <div class="flex items-center justify-between border-b bg-gray-50 px-4 py-2">
+    <div class="flex items-center gap-3">
+      <Button variant="ghost" size="icon" @click="emit('toggleSidebar')" class="h-9 w-9">
+        <Menu class="h-5 w-5" />
+      </Button>
+      <span class="text-base font-semibold text-gray-700">{{ pageTitle }}</span>
+    </div>
+  </div>
 </template>

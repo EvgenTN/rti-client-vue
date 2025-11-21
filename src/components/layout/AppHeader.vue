@@ -1,24 +1,22 @@
 <template>
-  <header class="bg-white shadow">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-      <div class="flex items-center space-x-4">
-        <h1 class="text-2xl font-bold text-gray-900">Real-Time Inventory</h1>
-      </div>
+  <header class="bg-white border-b">
+    <div class="px-4 py-3 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-gray-900">Real-Time Inventory</h1>
       
-      <div v-if="authStore.isAuthenticated" class="flex items-center space-x-4">
+      <div v-if="authStore.isAuthenticated" class="flex items-center gap-3">
         <router-link
           to="/profile"
-          class="text-sm text-gray-700 hover:text-gray-900 flex items-center"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors"
         >
-          <span>{{ authStore.user?.fullName || authStore.user?.email }}</span>
-          <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+          <span class="text-sm font-medium text-gray-700">{{ authStore.user?.fullName || authStore.user?.email }}</span>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
             {{ authStore.user?.role }}
           </span>
         </router-link>
         
         <button
           @click="handleLogout"
-          class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          class="inline-flex items-center px-4 py-1.5 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
         >
           Logout
         </button>

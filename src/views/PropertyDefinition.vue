@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -15,6 +16,7 @@ import type { PropertyDefinition } from '@/models/property-definition'
 import { PropertyType } from '@/models/property-definition'
 
 // Reactive data
+const authStore = useAuthStore()
 const propertyDefinitions = ref<PropertyDefinition[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -141,7 +143,7 @@ onMounted(() => {
   <div class="container mx-auto p-6">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold">Property Definitions</h1>
-      <Button @click="openCreateForm" v-if="!showForm">
+      <Button v-if="authStore.isOperator && !showForm" @click="openCreateForm">
         Add Property Definition
       </Button>
     </div>
@@ -228,6 +230,7 @@ onMounted(() => {
             <TableCell>
               <div class="flex gap-2">
                 <Button
+                  v-if="authStore.isOperator"
                   variant="outline"
                   size="sm"
                   @click="openEditForm(propDef)"
@@ -235,6 +238,7 @@ onMounted(() => {
                   Edit
                 </Button>
                 <Button
+                  v-if="authStore.isOperator"
                   variant="destructive"
                   size="sm"
                   @click="deletePropertyDefinition(propDef.name)"
@@ -257,7 +261,7 @@ onMounted(() => {
       </div>
       <h3 class="text-lg font-medium text-gray-900 mb-2">No property definitions</h3>
       <p class="text-gray-500 mb-4">Get started by creating your first property definition.</p>
-      <Button @click="openCreateForm">
+      <Button v-if="authStore.isOperator" @click="openCreateForm">
         Add Property Definition
       </Button>
     </div>
