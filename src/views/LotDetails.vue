@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { LotService, type LotDetails, type LotLocation } from '@/lib/lot-api'
 import { ActionService } from '@/lib/action-api'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,7 @@ import { useToast } from '@/lib/toast'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 const { toasts } = useToast()
 const loading = ref(false)
 const lot = ref<LotDetails | null>(null)
@@ -141,7 +143,7 @@ onMounted(() => {
           <ArrowLeft class="mr-2 h-4 w-4" />
           Back to Lots
         </Button>
-        <Button v-if="lot" @click="editLot">
+        <Button v-if="lot && authStore.isOperator" @click="editLot">
           <Pencil class="mr-2 h-4 w-4" />
           Edit Lot
         </Button>
@@ -253,7 +255,7 @@ onMounted(() => {
                     </TableCell>
                     <TableCell class="text-right">
                       <Button
-                        v-if="editingLocationKey !== getLocationKey(entry)"
+                        v-if="authStore.isOperator && editingLocationKey !== getLocationKey(entry)"
                         variant="ghost"
                         size="icon"
                         @click="startEditingQuantity(entry)"

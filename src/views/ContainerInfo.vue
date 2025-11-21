@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { ContainerService, type ContainerWithLots, type ContainerLot } from '@/lib/container-api'
 import { ActionService } from '@/lib/action-api'
 import { useToast } from '@/lib/toast'
@@ -20,6 +21,7 @@ import Collapsible from '@/components/ui/Collapsible.vue'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 const toast = useToast()
 const loading = ref(false)
 const container = ref<ContainerWithLots | null>(null)
@@ -150,7 +152,7 @@ onMounted(() => {
           <ArrowLeft class="mr-2 h-4 w-4" />
           Back to Containers
         </Button>
-        <Button v-if="container" @click="editContainer">
+        <Button v-if="container && authStore.isOperator" @click="editContainer">
           <Pencil class="mr-2 h-4 w-4" />
           Edit Container
         </Button>
@@ -260,7 +262,7 @@ onMounted(() => {
                       </TableCell>
                       <TableCell>
                         <Button
-                          v-if="editingLotKey !== getLotKey(entry)"
+                          v-if="authStore.isOperator && editingLotKey !== getLotKey(entry)"
                           variant="ghost"
                           size="sm"
                           @click="startEditingQuantity(entry)"

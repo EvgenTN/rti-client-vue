@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { ContainerService, type Container } from '@/lib/container-api'
 import { Button } from '@/components/ui/button'
 import { Pencil, Trash2, Eye, Plus, Warehouse } from 'lucide-vue-next'
@@ -20,6 +21,7 @@ import LoadingState from '@/components/ui/LoadingState.vue'
 import ContainerForm from '@/components/containers/ContainerForm.vue'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const containers = ref<Container[]>([])
 const loading = ref(false)
 const viewMode = ref<'table' | 'cards'>('cards')
@@ -122,7 +124,7 @@ const hasContainers = computed(() => (containers.value?.length ?? 0) > 0)
       <h1 class="text-2xl font-bold text-gray-900">Containers</h1>
       <div class="flex items-center gap-4">
         <ViewSwitcher :current-view="viewMode" @view-change="viewMode = $event" />
-        <Button @click="openCreateForm">
+        <Button v-if="authStore.isOperator" @click="openCreateForm">
           <Plus class="mr-2 h-4 w-4" />
           Create Container
         </Button>
@@ -178,10 +180,10 @@ const hasContainers = computed(() => (containers.value?.length ?? 0) > 0)
                   <Button size="icon" variant="ghost" @click="viewDetails(container)" title="View details">
                     <Eye class="h-4 w-4" />
                   </Button>
-                  <Button size="icon" variant="ghost" @click="openEditForm(container)" title="Edit container">
+                  <Button v-if="authStore.isOperator" size="icon" variant="ghost" @click="openEditForm(container)" title="Edit container">
                     <Pencil class="h-4 w-4" />
                   </Button>
-                  <Button size="icon" variant="ghost" @click="promptRemove(container)" :disabled="removing === container.name" title="Delete container">
+                  <Button v-if="authStore.isOperator" size="icon" variant="ghost" @click="promptRemove(container)" :disabled="removing === container.name" title="Delete container">
                     <Trash2 class="h-4 w-4" />
                   </Button>
                 </div>
@@ -215,11 +217,11 @@ const hasContainers = computed(() => (containers.value?.length ?? 0) > 0)
               <Eye class="mr-2 h-4 w-4" />
               Details
             </Button>
-            <Button size="sm" @click="openEditForm(container)">
+            <Button v-if="authStore.isOperator" size="sm" @click="openEditForm(container)">
               <Pencil class="mr-2 h-4 w-4" />
               Edit
             </Button>
-            <Button variant="destructive" size="sm" @click="promptRemove(container)" :disabled="removing === container.name">
+            <Button v-if="authStore.isOperator" variant="destructive" size="sm" @click="promptRemove(container)" :disabled="removing === container.name">
               <Trash2 class="mr-2 h-4 w-4" />
               Delete
             </Button>
