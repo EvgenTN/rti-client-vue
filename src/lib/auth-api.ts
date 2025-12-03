@@ -1,6 +1,7 @@
 import type { LoginRequest, RegisterRequest, TokenResponse, RefreshTokenRequest, User } from '@/models/auth'
+import { API_BASE_URL } from './api-config'
 
-const API_BASE = '/api'
+const API_BASE = `${API_BASE_URL}/api`
 
 export const authApi = {
   async login(credentials: LoginRequest): Promise<TokenResponse> {

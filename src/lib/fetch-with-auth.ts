@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/stores/auth'
+import { API_BASE_URL } from './api-config'
 
 interface FetchWithAuthOptions extends RequestInit {
   skipAuth?: boolean
@@ -15,6 +16,9 @@ export async function fetchWithAuth(
   const authStore = useAuthStore()
   const { skipAuth, ...fetchOptions } = options
 
+  // Prepend API base URL for relative paths
+  const fullUrl = url.startsWith('/') ? `${API_BASE_URL}${url}` : url
+
   // Inject auth token if available and not explicitly skipped
   if (!skipAuth && authStore.accessToken) {
     fetchOptions.headers = {
@@ -24,7 +28,7 @@ export async function fetchWithAuth(
   }
 
   // Make the request
-  let response = await fetch(url, fetchOptions)
+  let response = await fetch(fullUrl, fetchOptions)
 
   // If we get a 401 and we have a refresh token, try to refresh
   if (response.status === 401 && authStore.refreshToken && !skipAuth) {
@@ -37,7 +41,7 @@ export async function fetchWithAuth(
         ...fetchOptions.headers,
         Authorization: `Bearer ${authStore.accessToken}`,
       }
-      response = await fetch(url, fetchOptions)
+      response = await fetch(fullUrl, fetchOptions)
     } catch (error) {
       // If refresh fails, clear auth and throw
       authStore.clearAuth()
