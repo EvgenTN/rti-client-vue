@@ -19,7 +19,7 @@ export default defineConfig({
       // '/server': 'http://localhost:5049',
       // with options
       '/api': {
-        target: 'http://localhost:5049',
+        target: 'http://localhost:5090',
         secure: false,
         // changeOrigin: true,
         // logLevel: "debug"

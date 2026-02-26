@@ -13,7 +13,7 @@ const API_BASE = '/api/actions'
 export const ActionService = {
   async moveMaterials(request: MoveMaterialsRequest): Promise<Transfer> {
     try {
-      const response = await postWithAuth(`${API_BASE}/MoveMaterials`, request)
+      const response = await postWithAuth(`${API_BASE}/move-materials`, request)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
@@ -33,7 +33,7 @@ export const ActionService = {
 
   async updateLotQuantity(request: UpdateLotQuantityRequest): Promise<void> {
     try {
-      const response = await postWithAuth(`${API_BASE}/UpdateLotQuantity`, request)
+      const response = await postWithAuth(`${API_BASE}/update-lot-quantity`, request)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))

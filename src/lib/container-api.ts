@@ -28,7 +28,7 @@ interface PagedResponse<T> {
 export class ContainerService {
   static async getAll(): Promise<Container[]> {
     try {
-      const response = await postWithAuth(`${API_BASE}/containers/GetAll`, {
+      const response = await postWithAuth(`${API_BASE}/containers/get-all`, {
         page: 1,
         pageSize: 100
       })
